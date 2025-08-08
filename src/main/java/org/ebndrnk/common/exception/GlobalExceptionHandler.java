@@ -1,4 +1,4 @@
-package org.ebndrnk.exception;
+package org.ebndrnk.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

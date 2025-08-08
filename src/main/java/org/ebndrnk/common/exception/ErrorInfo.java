@@ -1,4 +1,4 @@
-package org.ebndrnk.exception;
+package org.ebndrnk.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
