@@ -30,19 +30,5 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorInfo, ex.getStatus());
     }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorInfo> handleGenericException(Exception ex, HttpServletRequest request) {
-
-        ErrorInfo errorInfo = new ErrorInfo(
-                LocalDateTime.now(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                "Internal server error",
-                request.getRequestURI()
-        );
-
-        return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }
 

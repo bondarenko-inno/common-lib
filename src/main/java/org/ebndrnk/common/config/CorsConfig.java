@@ -1,4 +1,4 @@
-package org.ebndrnk.common.cors;
+package org.ebndrnk.common.config;
 
 import jakarta.annotation.Nullable;
 import org.springframework.context.annotation.Bean;
