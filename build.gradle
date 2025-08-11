@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'org.springframework.boot' version '3.5.4' apply(false)
     id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -21,12 +21,12 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+    api 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 
 
-    implementation 'org.springframework:spring-web:6.2.8'
-    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
-    implementation 'org.springframework:spring-context'
-    implementation 'org.springframework.data:spring-data-jpa:3.3.2'
+    api 'org.springframework:spring-web:6.2.8'
+    api 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    api 'org.springframework:spring-context'
+    api 'org.springframework.data:spring-data-jpa:3.3.2'
 
 }
