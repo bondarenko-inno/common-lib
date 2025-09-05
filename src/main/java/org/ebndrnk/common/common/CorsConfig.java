@@ -1,4 +1,4 @@
-package org.ebndrnk.common.config;
+package org.ebndrnk.common.common;
 
 import jakarta.annotation.Nullable;
 import org.springframework.context.annotation.Bean;

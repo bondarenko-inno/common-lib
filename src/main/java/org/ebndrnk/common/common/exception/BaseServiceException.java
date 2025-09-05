@@ -1,4 +1,4 @@
-package org.ebndrnk.common.exception;
+package org.ebndrnk.common.common.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

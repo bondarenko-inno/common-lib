@@ -1,4 +1,4 @@
-package org.ebndrnk.common.filter;
+package org.ebndrnk.common.security.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

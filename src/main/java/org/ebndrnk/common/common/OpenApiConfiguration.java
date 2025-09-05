@@ -1,4 +1,4 @@
-package org.ebndrnk.common.config;
+package org.ebndrnk.common.common;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

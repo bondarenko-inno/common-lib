@@ -1,4 +1,4 @@
-package org.ebndrnk.common.model.entity;
+package org.ebndrnk.common.common.entity;
 
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;

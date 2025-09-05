@@ -1,7 +1,7 @@
-package org.ebndrnk.common.config;
+package org.ebndrnk.common.security;
 
 import lombok.RequiredArgsConstructor;
-import org.ebndrnk.common.filter.JwtAuthenticationFilter;
+import org.ebndrnk.common.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
