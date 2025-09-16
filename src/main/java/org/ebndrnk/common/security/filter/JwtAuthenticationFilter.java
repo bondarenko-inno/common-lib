@@ -23,6 +23,14 @@ import java.util.List;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final String[] WHITELIST = new String[]{
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/actuator/**"
+    };
+
+
     private final JwtTokenValidator jwtTokenValidator;
 
     @Override
@@ -35,6 +43,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String method = request.getMethod();
 
         log.info("Incoming request: {} {}", method, path);
+
+        for (String publicPath : WHITELIST) {
+            if (path.startsWith(publicPath.replace("/**", ""))) {
+                log.info("Public path, skipping JWT validation: {}", path);
+                filterChain.doFilter(request, response);
+                return;
+            }
+        }
+
 
         if (HttpMethod.OPTIONS.matches(method)) {
             log.info("OPTIONS request, skipping JWT validation: {}", path);
