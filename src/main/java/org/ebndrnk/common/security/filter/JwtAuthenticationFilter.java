@@ -1,11 +1,13 @@
 package org.ebndrnk.common.security.filter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,55 +18,63 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-
-/**
- * Filter that processes incoming HTTP requests to validate JWT tokens.
- * <p>
- * If a valid token is found in the Authorization header, sets the authentication
- * in the Spring Security context.
- */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenValidator jwtTokenValidator;
 
-    /**
-     * Filters each incoming HTTP request to check for a valid JWT token.
-     * If a valid token is present, sets the authentication in the security context.
-     *
-     * @param request     the incoming HTTP request
-     * @param response    the outgoing HTTP response
-     * @param filterChain the filter chain to continue processing
-     * @throws ServletException if a servlet error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        log.info("Incoming request: {} {}", method, path);
+
+        if (HttpMethod.OPTIONS.matches(method)) {
+            log.info("OPTIONS request, skipping JWT validation: {}", path);
             filterChain.doFilter(request, response);
             return;
         }
 
         String authHeader = request.getHeader("Authorization");
+        log.info("Authorization header: {}", authHeader);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.warn("JWT token is missing or invalid for path {}!", path);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token is missing or invalid!");
+            return;
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
             Claims claims = jwtTokenValidator.validateToken(token);
-
             String email = claims.getSubject();
             String role = claims.get("role", String.class);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+            log.info("JWT valid. User: {}, Role: {}", email, role);
 
-        filterChain.doFilter(request, response);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            email, null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                    );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            filterChain.doFilter(request, response);
+
+        } catch (JwtException e) {
+            log.warn("Invalid JWT token for path {}: {}", path, e.getMessage());
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid JWT token!");
+        } catch (Exception e) {
+            log.error("Unexpected error during JWT validation for path {}: {}", path, e.getMessage(), e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
+        }
     }
 }
